@@ -21,7 +21,8 @@ var examples = [
   {req: -2, stream: true, end: false, value: new Buffer('goodbye')}, //a stream response
   {req: -3, stream: false, end: true, value: flat(new Error('intentional'))},
   {req:  2, stream: true, end: true, value: true}, //a stream packet
-  {req: -2, stream: true, end: true, value: true} //a stream response
+  {req: -2, stream: true, end: true, value: true}, //a stream response
+  "GOODBYE"
 ]
 
 tape('simple', function (t) {
@@ -30,12 +31,13 @@ tape('simple', function (t) {
 
     var msg = psc.decodeHead(c[0])
 
-    t.equal(msg.length, c[1].length)
-    msg = psc.decodeBody(c[1], msg)
-
-    delete msg.length
-    delete msg.type
-    t.deepEqual(e, msg)
+    if(c[1]) {
+      t.equal(msg.length, c[1].length)
+      msg = psc.decodeBody(c[1], msg)
+      delete msg.length
+      delete msg.type
+      t.deepEqual(e, msg)
+    }
   })
   t.end()
 })
