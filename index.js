@@ -4,10 +4,6 @@ var Reader = require('pull-reader')
 
 var BUFFER = 0, STRING = 1, OBJECT = 2
 
-function isObject (o) {
-  return o && 'object' === typeof o
-}
-
 var isBuffer = Buffer.isBuffer
 
 function isString (s) {
@@ -18,8 +14,8 @@ function encodePair (msg) {
 
   var head = new Buffer(9)
   var flags = 0
-  var value = msg.value || msg.end
-  console.log(value)
+  var value = msg.value !== undefined ? msg.value : msg.end
+
   if(isString(value)) {
     flags = STRING
     value = new Buffer(value)
@@ -34,12 +30,9 @@ function encodePair (msg) {
 
   // does this frame represent a msg, a req, or a stream?
 
-  flags = ((
-    !msg.req && !msg.stream ? 0 // message
-  : !msg.stream             ? 1 // req
-  : !msg.end                ? 2 // stream, but not final packet
-  :                           3 // last packet in stream!
-  ) << 6) | flags
+  //end, stream
+
+  flags = msg.stream << 3 | msg.end << 2 | flags
 
   head[0] = flags
 
@@ -56,19 +49,19 @@ function decodeHead (bytes) {
   var length = bytes.readUInt32BE(1)
   var req = bytes.readInt32BE(5)
 
-  console.log(flags, flags.toString(2))
-
   return {
-    req: req,
-    stream: flags >= 128 ? true : false,
-    end: (flags >> 6) === 3,
-    value: null,
-    length: length,
-    type: flags & 3
+    req    : req,
+    stream : !!(flags & 8),
+    end    : !!(flags & 4),
+    value  : null,
+    length : length,
+    type   : flags & 3
   }
 }
 
 function decodeBody (bytes, msg) {
+  if(bytes.length !== msg.length)
+    throw new Error('incorrect length, expected:'+msg.length+' found:'+bytes.length)
   if(BUFFER === msg.type) msg.value = bytes
   else if(STRING === msg.type) msg.value = bytes.toString()
   else if(OBJECT === msg.type) msg.value = JSON.parse(bytes.toString())
