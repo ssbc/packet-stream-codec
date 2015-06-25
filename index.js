@@ -4,6 +4,7 @@ var Reader = require('pull-reader')
 
 var BUFFER = 0, STRING = 1, OBJECT = 2
 
+var GOODBYE = 'GOODBYE'
 var isBuffer = Buffer.isBuffer
 
 function isString (s) {
@@ -15,6 +16,12 @@ function encodePair (msg) {
   var head = new Buffer(9)
   var flags = 0
   var value = msg.value !== undefined ? msg.value : msg.end
+
+  //final packet
+  if(isString(msg) && msg === GOODBYE) {
+    head.fill(0)
+    return [head, null]
+  }
 
   if(isString(value)) {
     flags = STRING
@@ -73,21 +80,27 @@ function encode () {
   return Through(function (d) {
     var c = encodePair(d)
     this.queue(c[0])
-    this.queue(c[1])
+    if(c[1] !== null)
+      this.queue(c[1])
   })
 }
 
 function decode () {
-  var reader = Reader()
+  var reader = Reader(), ended = false
 
   return function (read) {
     reader(read)
 
     return function (abort, cb) {
+      if(ended) return cb(true)
       if(abort) return reader.abort(abort, cb)
       reader.read(9, function (err, head) {
         if(err) return cb(err)
         var msg = decodeHead(head)
+        if(msg.length === 0) { //final packet
+          ended = true
+          return cb(null, GOODBYE)
+        }
         reader.read(msg.length, function (err, body) {
           if(err) return cb(err)
           decodeBody(body, msg)
