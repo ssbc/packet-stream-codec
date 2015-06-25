@@ -8,7 +8,6 @@
     "url": "git://github.com/dominictarr/packet-stream-buffers.git"
   },
   "dependencies": {
-    "varint": "~3.0.1"
   },
   "devDependencies": {},
   "scripts": {
