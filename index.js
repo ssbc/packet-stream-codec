@@ -76,11 +76,7 @@ function decodeBody (bytes, msg) {
   return msg
 }
 
-exports.encodePair = encodePair
-exports.decodeHead = decodeHead
-exports.decodeBody = decodeBody
-
-exports.encode = function () {
+function encode () {
   return Through(function (d) {
     var c = encodePair(d)
     this.queue(c[0])
@@ -88,7 +84,7 @@ exports.encode = function () {
   })
 }
 
-exports.decode = function () {
+function decode () {
   var reader = Reader()
 
   return function (read) {
@@ -108,3 +104,18 @@ exports.decode = function () {
     }
   }
 }
+
+exports = module.exports = function (stream) {
+  return {
+    source: encode()(stream.source),
+    sink: function (read) { return stream.sink(decode()(read)) }
+  }
+}
+
+exports.encodePair = encodePair
+exports.decodeHead = decodeHead
+exports.decodeBody = decodeBody
+
+exports.encode = encode
+exports.decode = decode
+
