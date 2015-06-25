@@ -1,5 +1,7 @@
 
 var tape = require('tape')
+var pull = require('pull-stream')
+var split = require('pull-randomly-split')
 
 var psc = require('../')
 
@@ -27,4 +29,25 @@ tape('simple', function (t) {
     t.deepEqual(e, msg)
   })
   t.end()
+})
+
+tape('streaming', function (t) {
+
+  pull(
+    pull.values(examples),
+    psc.encode(),
+    split(),
+    psc.decode(),
+    pull.collect(function (err, actual) {
+
+      examples.forEach(function (expected, i) {
+        delete actual[i].length
+        delete actual[i].type
+
+        t.deepEqual(actual[i], expected)
+      })
+      t.end()
+    })
+  )
+
 })
