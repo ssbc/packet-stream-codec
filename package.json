@@ -7,9 +7,10 @@
     "type": "git",
     "url": "git://github.com/dominictarr/packet-stream-buffers.git"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "tape": "~4.0.0"
   },
-  "devDependencies": {},
   "scripts": {
     "prepublish": "npm ls &&  npm test",
     "test": "set -e; for t in test/*.js; do node $t; done"
