@@ -11,8 +11,10 @@ important)
 
 the protocol sends a fixed size header, and then a buffer.
 ```
-[flags (1byte), length (4 bytes, UInt32BE), req (4 bytes, Int32BE)]
-[body (length bytes)]
+(
+  [flags (1byte), length (4 bytes, UInt32BE), req (4 bytes, Int32BE)]
+  [body (length bytes)]
+) *
 ```
 
 `flags` indicates the encoding type of the body, and whether it's
