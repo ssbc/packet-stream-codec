@@ -1,11 +1,11 @@
 {
-  "name": "packet-stream-buffers",
-  "description": "",
+  "name": "packet-stream-codec",
+  "description": "binary codec for packet-stream",
   "version": "0.0.0",
-  "homepage": "https://github.com/dominictarr/packet-stream-buffers",
+  "homepage": "https://github.com/dominictarr/packet-stream-codec",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/packet-stream-buffers.git"
+    "url": "git://github.com/dominictarr/packet-stream-codec.git"
   },
   "dependencies": {
     "pull-reader": "~1.1.0",
