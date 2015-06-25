@@ -51,3 +51,27 @@ tape('streaming', function (t) {
   )
 
 })
+
+tape('streaming', function (t) {
+
+  var duplex = {
+    source: pull.values(examples),
+    sink: pull.collect(function (err, actual) {
+
+      examples.forEach(function (expected, i) {
+        delete actual[i].length
+        delete actual[i].type
+
+        t.deepEqual(actual[i], expected)
+      })
+      t.end()
+    })
+
+  }
+
+  var s = psc(duplex)
+
+  pull(s, s)
+
+})
+
