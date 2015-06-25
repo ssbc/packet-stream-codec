@@ -1,5 +1,8 @@
 
-const BUFFER = 0, STRING = 1, OBJECT = 2
+var Through = require('pull-through')
+var Reader = require('pull-reader')
+
+var BUFFER = 0, STRING = 1, OBJECT = 2
 
 function isObject (o) {
   return o && 'object' === typeof o
@@ -46,8 +49,7 @@ function encodePair (msg) {
   return [head, value]
 }
 
-exports.encodePair = encodePair
-exports.decodeHead = function (bytes) {
+function decodeHead (bytes) {
   if(bytes.length != 9)
     throw new Error('expected header to be 9 bytes long')
   var flags = bytes[0]
@@ -66,10 +68,43 @@ exports.decodeHead = function (bytes) {
   }
 }
 
-exports.decodeBody = function (bytes, msg) {
+function decodeBody (bytes, msg) {
   if(BUFFER === msg.type) msg.value = bytes
   else if(STRING === msg.type) msg.value = bytes.toString()
   else if(OBJECT === msg.type) msg.value = JSON.parse(bytes.toString())
   else throw new Error('unknown message type')
   return msg
+}
+
+exports.encodePair = encodePair
+exports.decodeHead = decodeHead
+exports.decodeBody = decodeBody
+
+exports.encode = function () {
+  return Through(function (d) {
+    var c = encodePair(d)
+    this.queue(c[0])
+    this.queue(c[1])
+  })
+}
+
+exports.decode = function () {
+  var reader = Reader()
+
+  return function (read) {
+    reader(read)
+
+    return function (abort, cb) {
+      if(abort) return reader.abort(abort, cb)
+      reader.read(9, function (err, head) {
+        if(err) return cb(err)
+        var msg = decodeHead(head)
+        reader.read(msg.length, function (err, body) {
+          if(err) return cb(err)
+          decodeBody(body, msg)
+          cb(null, msg)
+        })
+      })
+    }
+  }
 }

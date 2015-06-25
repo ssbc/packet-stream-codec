@@ -7,9 +7,14 @@
     "type": "git",
     "url": "git://github.com/dominictarr/packet-stream-buffers.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "pull-reader": "~1.1.0",
+    "pull-through": "~1.0.17",
+    "pull-stream": "~2.27.0"
+  },
   "devDependencies": {
-    "tape": "~4.0.0"
+    "tape": "~4.0.0",
+    "pull-randomly-split": "~1.0.4"
   },
   "scripts": {
     "prepublish": "npm ls &&  npm test",
