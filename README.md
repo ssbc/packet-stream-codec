@@ -9,12 +9,15 @@ we have not done this in secure-scuttlebutt, so performance is more
 important)
 
 
-the protocol sends a fixed size header, and then a buffer.
+The protocol sends zero or more header:body pairs,
+then a final header that is all zeros.
+
 ```
 (
   [flags (1byte), length (4 bytes, UInt32BE), req (4 bytes, Int32BE)]
   [body (length bytes)]
 ) *
+[zeros (9 bytes)]
 ```
 
 `flags` indicates the encoding type of the body, and whether it's
