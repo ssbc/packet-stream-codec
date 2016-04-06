@@ -8,11 +8,11 @@
     "url": "git://github.com/dominictarr/packet-stream-codec.git"
   },
   "dependencies": {
-    "pull-reader": "~1.1.0",
-    "pull-through": "~1.0.17",
-    "pull-stream": "~2.27.0"
+    "pull-reader": "^1.2.4",
+    "pull-through": "^1.0.17"
   },
   "devDependencies": {
+    "pull-stream": "^3.2.3",
     "tape": "~4.0.0",
     "pull-randomly-split": "~1.0.4"
   },
@@ -23,3 +23,4 @@
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
   "license": "MIT"
 }
+
