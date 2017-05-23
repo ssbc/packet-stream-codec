@@ -103,7 +103,11 @@ function decode () {
         }
         reader.read(msg.length, function (err, body) {
           if(err) return cb(err)
-          decodeBody(body, msg)
+          try {
+            decodeBody(body, msg)
+          } catch(e) {
+            return cb(e)
+          }
           cb(null, msg)
         })
       })
