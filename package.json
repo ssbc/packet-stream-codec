@@ -1,7 +1,7 @@
 {
   "name": "packet-stream-codec",
   "description": "binary codec for packet-stream",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "homepage": "https://github.com/dominictarr/packet-stream-codec",
   "repository": {
     "type": "git",
