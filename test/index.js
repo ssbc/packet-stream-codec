@@ -22,6 +22,7 @@ var examples = [
   {req: -3, stream: false, end: true, value: flat(new Error('intentional'))},
   {req:  2, stream: true, end: true, value: true}, //a stream packet
   {req: -2, stream: true, end: true, value: true}, //a stream response
+  {req: 1, stream: false, end: false, value: new Buffer(1024*1024)}, //a large buffer
   "GOODBYE"
 ]
 
