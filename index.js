@@ -13,7 +13,7 @@ function isString (s) {
 
 function encodePair (msg) {
 
-  var head = new Buffer(9)
+  var head = Buffer.alloc(9)
   var flags = 0
   var value = msg.value !== undefined ? msg.value : msg.end
 
@@ -25,14 +25,14 @@ function encodePair (msg) {
 
   if(isString(value)) {
     flags = STRING
-    value = new Buffer(value)
+    value = Buffer.from(value)
   }
   else if(isBuffer(value)) {
     flags = BUFFER
   }
   else {
     flags = OBJECT
-    value = new Buffer(JSON.stringify(value))
+    value = Buffer.from(JSON.stringify(value))
   }
 
   // does this frame represent a msg, a req, or a stream?
