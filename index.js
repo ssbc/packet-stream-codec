@@ -10,7 +10,7 @@ const GOODBYE = 'GOODBYE'
 function encodePair(msg) {
   let head = Buffer.alloc(9)
   let flags = 0
-  let value = msg.value !== undefined ? msg.value : msg.end
+  let body = msg.value !== undefined ? msg.value : msg.end
 
   // final packet
   if (typeof msg === 'string' && msg === GOODBYE) {
@@ -18,14 +18,14 @@ function encodePair(msg) {
     return [head, null]
   }
 
-  if (typeof value === 'string') {
+  if (typeof body === 'string') {
     flags = STRING
-    value = Buffer.from(value, 'utf-8')
-  } else if (Buffer.isBuffer(value)) {
+    body = Buffer.from(body, 'utf-8')
+  } else if (Buffer.isBuffer(body)) {
     flags = BUFFER
   } else {
     flags = OBJECT
-    value = Buffer.from(JSON.stringify(value), 'utf-8')
+    body = Buffer.from(JSON.stringify(body), 'utf-8')
   }
 
   // does this frame represent a msg, a req, or a stream?
@@ -36,10 +36,10 @@ function encodePair(msg) {
 
   head[0] = flags
 
-  head.writeUInt32BE(value.length, 1)
+  head.writeUInt32BE(body.length, 1)
   head.writeInt32BE(msg.req || 0, 5)
 
-  return [head, value]
+  return [head, body]
 }
 
 function decodeHead(bytes) {
@@ -71,10 +71,10 @@ function decodeBody(bytes, msg) {
 }
 
 function encode() {
-  return Through(function pscEncodeHeadAndValue(d) {
-    const [head, value] = encodePair(d)
+  return Through(function pscEncodeHeadAndBody(data) {
+    const [head, body] = encodePair(data)
     this.queue(head)
-    if (value !== null) this.queue(value)
+    if (body !== null) this.queue(body)
   })
 }
 
