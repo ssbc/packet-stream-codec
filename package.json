@@ -1,27 +1,28 @@
 {
   "name": "packet-stream-codec",
-  "description": "binary codec for packet-stream",
+  "description": "Binary codec for packet-stream",
   "version": "1.1.3",
-  "homepage": "https://github.com/dominictarr/packet-stream-codec",
+  "homepage": "https://github.com/ssbc/packet-stream-codec",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/packet-stream-codec.git"
+    "url": "git://github.com/ssbc/packet-stream-codec.git"
   },
   "dependencies": {
-    "pull-reader": "^1.2.4",
-    "pull-through": "^1.0.17"
+    "pull-reader": "^1.3.1",
+    "pull-through": "^1.0.18"
   },
   "devDependencies": {
-    "pull-stream": "^3.2.3",
-    "tape": "~4.0.0",
-    "pull-randomly-split": "~1.0.4"
+    "pull-randomly-split": "~1.0.4",
+    "pull-stream": "^3.6.14",
+    "tap-spec": "^5.0.0",
+    "tape": "~5.5.0"
   },
   "engines": {
-    "node": ">=5.10.0"
+    "node": ">=12"
   },
   "scripts": {
     "prepublish": "npm test",
-    "test": "set -e; for t in test/*.js; do node $t; done"
+    "test": "tape test/*.js | tap-spec"
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
   "license": "MIT"
