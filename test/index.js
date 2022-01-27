@@ -2,6 +2,7 @@ const tape = require('tape')
 const pull = require('pull-stream')
 const split = require('pull-randomly-split')
 
+process.env.DEBUG = '*'
 const psc = require('../')
 
 function flat(err) {
@@ -86,3 +87,24 @@ tape('streaming', (t) => {
 
   pull(s, s)
 })
+
+tape('debug', (t) => {
+  const duplex = {
+    source: pull.values(examples),
+    sink: pull.collect((err, actual) => {
+      t.error(err, 'no error')
+      examples.forEach((expected, i) => {
+        delete actual[i].length
+        delete actual[i].type
+
+        t.deepEqual(actual[i], expected)
+      })
+      t.end()
+    }),
+  }
+
+  const s = psc(duplex, 'muxrpc:psc')
+
+  pull(s, s)
+})
+

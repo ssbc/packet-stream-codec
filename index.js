@@ -1,5 +1,6 @@
 const Through = require('pull-through')
 const Reader = require('pull-reader')
+const Debug = require('debug')
 
 const BUFFER = 0
 const STRING = 1
@@ -70,15 +71,16 @@ function decodeBody(bytes, msg) {
   return msg
 }
 
-function encode() {
+function encode(debug) {
   return Through(function pscEncodeHeadAndBody(data) {
+    if (debug) debug('encoded: %o', data)
     const [head, body] = encodePair(data)
     this.queue(head)
     if (body !== null) this.queue(body)
   })
 }
 
-function decode() {
+function decode(debug) {
   const reader = Reader()
   let ended = false
 
@@ -103,6 +105,7 @@ function decode() {
           } catch (e) {
             return cb(e)
           }
+          if (debug) debug('decoded: %o', msg)
           cb(null, msg)
         })
       })
@@ -110,11 +113,18 @@ function decode() {
   }
 }
 
-exports = module.exports = function packetStreamCodec(stream) {
+exports = module.exports = function packetStreamCodec(stream, debugEnabled) {
+  const debug =
+    debugEnabled === true
+      ? Debug('packet-stream-codec')
+      : typeof debugEnabled === 'string'
+      ? Debug(debugEnabled)
+      : null
+
   return {
-    source: encode()(stream.source),
+    source: encode(debug)(stream.source),
     sink(read) {
-      return stream.sink(decode()(read))
+      return stream.sink(decode(debug)(read))
     },
   }
 }

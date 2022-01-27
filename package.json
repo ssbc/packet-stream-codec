@@ -15,6 +15,7 @@
     "pull-through": "^1.0.18"
   },
   "devDependencies": {
+    "debug": "^4.3.3",
     "pull-randomly-split": "~1.0.4",
     "pull-stream": "^3.6.14",
     "tap-spec": "^5.0.0",
