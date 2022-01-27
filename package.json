@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git://github.com/ssbc/packet-stream-codec.git"
   },
+  "files": [
+    "*.js"
+  ],
   "dependencies": {
     "pull-reader": "^1.3.1",
     "pull-through": "^1.0.18"
